@@ -116,7 +116,7 @@ class gcpweb (
     }
   }
 
-# Configure vhost + php-fpm pool
+# (3) Configure vhost + php-fpm pool
   file { '/etc/nginx/sites-enabled':
     ensure  => 'directory',
     recurse => true,
