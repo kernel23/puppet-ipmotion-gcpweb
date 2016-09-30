@@ -1,0 +1,25 @@
+{
+  "name": "ipmotion-gcpweb",
+  "version": "0.0.1",
+  "source": "",
+  "author": "tvass",
+  "license": "Apache License, Version 2.0",
+  "summary": "Puppet module to manage ipmotion web server on GCP.",
+  "description": "Puppet module to manage ipmotion web server on GCP.",
+  "project_page": "",
+  "issues_url": "",
+   "operatingsystem_support": [
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "16.04"
+      ]
+    }
+],
+  "dependencies": [
+
+  ],
+  "types": [
+
+  ]
+}
