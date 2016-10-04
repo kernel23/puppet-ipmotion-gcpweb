@@ -46,6 +46,7 @@ class gcpweb (
 
 # (1) Configure server
   $enhancers = [
+    'curl',
     'nginx',
     'php-common',
     'php-fpm',
@@ -73,6 +74,15 @@ class gcpweb (
     ]
 
   package { $enhancers: ensure => 'latest' }
+
+  class absent_file_exec {
+    exec { 'wp-cli download':
+    command => '/usr/bin/curl -o /usr/local/bin/wp -L https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && /bin/chmod +x /usr/local/bin/wp',
+    require => Package['curl'],
+    creates => '/usr/local/bin/wp',
+    cwd     => '/tmp'
+    }
+  }
 
   if($vhost) and ($user) {
     service { ['nginx','php7.0-fpm']:
