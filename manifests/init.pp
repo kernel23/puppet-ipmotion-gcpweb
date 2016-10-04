@@ -103,17 +103,6 @@ class gcpweb (
       group  => $user,
       mode   => '0750',
     }
-
-    if defined(Package['phpmyadmin']) {
-      file { "/home/${user}/public_html/phpmyadmin":
-      ensure => 'link',
-      target => '/usr/share/phpmyadmin',
-      }
-    } else {
-      file { "/home/${user}/public_html/phpmyadmin":
-      ensure => 'absent',
-      }
-    }
   }
 
 # (3) Configure vhost + php-fpm pool
