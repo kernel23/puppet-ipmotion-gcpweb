@@ -121,6 +121,7 @@ class gcpweb (
     ensure  => 'directory',
     recurse => true,
     purge   => true,
+    require => Package[$enhancers]
   }
 
   if($vhost) and ($user) {
@@ -131,7 +132,8 @@ class gcpweb (
       mode    => '0644',
       owner   => 'root',
       group   => 'root',
-      notify  => Service['nginx']
+      notify  => Service['nginx'],
+      require => Package[$enhancers]
       }
     } else {
       file { "/etc/nginx/sites-available/${user}":
@@ -140,13 +142,15 @@ class gcpweb (
       mode    => '0644',
       owner   => 'root',
       group   => 'root',
-      notify  => Service['nginx']
+      notify  => Service['nginx'],
+      require => Package[$enhancers]
       }
     }
 
     file { "/etc/nginx/sites-enabled/${user}":
-    ensure => 'link',
-    target => "/etc/nginx/sites-available/${user}",
+    ensure  => 'link',
+    target  => "/etc/nginx/sites-available/${user}",
+    require => Package[$enhancers]
     }
 
     file { "/etc/php/7.0/fpm/pool.d/${user}.conf":
@@ -155,12 +159,14 @@ class gcpweb (
     mode    => '0644',
     owner   => 'root',
     group   => 'root',
-    notify  => Service['php7.0-fpm']
+    notify  => Service['php7.0-fpm'],
+    require => Package[$enhancers]
     }
   }
 
   file { '/etc/nginx/sites-enabled/default':
-  ensure => 'link',
-  target => '/etc/nginx/sites-available/default',
+  ensure  => 'link',
+  target  => '/etc/nginx/sites-available/default',
+  require => Package[$enhancers]
   }
 }
