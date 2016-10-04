@@ -13,8 +13,8 @@ You should not use this until you know exactly what you are doing ...
 
         # apt-get install puppet
         # git clone https://github.com/kernel23/puppet-ipmotion-gcpweb
-        # puppet module build .
-        # puppet module install ipmotion-gcpweb-0.0.1.tar.gz
+        # puppet module build puppet-ipmotion-gcpweb
+        # puppet module install puppet-ipmotion-gcpweb/pkg/ipmotion-gcpweb-0.0.1.tar.gz
 
 ##Usage
 
