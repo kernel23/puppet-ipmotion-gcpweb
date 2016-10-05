@@ -20,7 +20,7 @@
 define gcpweb::vhost (
   $user      = undef,
   $password  = '*',
-  $shell     = '/bin/bash',
+  $shell     = '/usr/sbin/nologin',
   $vhost     = undef,
   $ssl       = false,
   ) {
@@ -30,16 +30,28 @@ define gcpweb::vhost (
       ensure         => 'present',
       home           => "/home/${user}",
       password       => $password,
-      shell          => '/usr/sbin/nologin',
+      shell          => $shell,
       purge_ssh_keys => true,
       managehome     => true,
     }
 
-    file { "/home/${user}/public_html":
+    file { ["/home/${user}/public_html","/home/${user}/config"]:
       ensure => 'directory',
       owner  => $user,
       group  => $user,
       mode   => '0750',
+      require => User[$user]
+    }
+
+    file {"/home/${user}/config/nginx.conf":
+      ensure  => present,
+      content => template('gcpweb/nginx_user.conf.erb'),
+      mode    => '0644',
+      owner   => $user,
+      group   => $user,
+      require => File["/home/${user}/config"],
+      replace => 'no',
+      notify  => Service['nginx']
     }
 
     if ($ssl) {
