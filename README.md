@@ -22,17 +22,17 @@ To create and configure a basic vhost for your node (site.pp):
 
         node "instance-1.c.ipmotion-wp.internal" {
           class { "gcpweb":
-        }
-        gcpweb::vhost { 'example':
-          vhost    =>  ['example.org','www.example.org'],
-          user     => 'example',
-          ssl      => false
-        }
-        gcpweb::vhost { 'example2':
-          vhost    =>  ['example2.org','www.example2.org'],
-          user     => 'example2',
-          ssl      => false
-        }
+          }
+          gcpweb::vhost { 'example':
+            vhost    =>  ['example.org','www.example.org'],
+            user     => 'example',
+            ssl      => false
+          }
+          gcpweb::vhost { 'example2':
+            vhost    =>  ['example2.org','www.example2.org'],
+            user     => 'example2',
+            ssl      => false
+          }
 
 ##Run
 
