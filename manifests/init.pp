@@ -14,37 +14,9 @@
 # * Add user:group
 # * Create vhost (optional ssl with letsencrypt)
 # 
-# To do :
-#
-# * SSH keys
-#
-# == Parameters
-#
-# [*user*]
-# Default undef
-#
-# [*password*]
-# Default "*"
-#
-# [*vhost*]
-# Default undef
-#
-# [*ssl*]
-# Default true
-#
-# [*shell*]
-# Default '/usr/sbin/nologin'
-
 
 class gcpweb (
-  $user      = undef,
-  $password  = '*',
-  $shell     = '/usr/sbin/nologin',
-  $vhost     = undef,
-  $ssl       = true,
   ) {
-
-# (1) Configure server
   $enhancers = [
     'curl',
     'nginx',
@@ -75,6 +47,12 @@ class gcpweb (
 
   package { $enhancers: ensure => 'latest' }
 
+  service { ['nginx','php7.0-fpm']:
+    ensure  => 'running',
+    enable  => true,
+    require => Package['nginx','php7.0-fpm'],
+  }
+
   class absent_file_exec {
     exec { 'wp-cli download':
     command => '/usr/bin/curl -o /usr/local/bin/wp -L https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && /bin/chmod +x /usr/local/bin/wp',
@@ -84,88 +62,17 @@ class gcpweb (
     }
   }
 
-  if($vhost) and ($user) {
-    service { ['nginx','php7.0-fpm']:
-    ensure => running,
-    enable => true
-    }
-  } else {
-    service { ['nginx','php7.0-fpm']:
-    ensure => stopped,
-    enable => false
-    }
-  }
-
-# (2) Configure user
-  if($vhost) and ($user) {
-    user { $user:
-      ensure         => 'present',
-      home           => "/home/${user}",
-      password       => $password,
-      shell          => '/usr/sbin/nologin',
-      purge_ssh_keys => true,
-      managehome     => true,
-    }
-
-    file { "/home/${user}/public_html":
-      ensure => 'directory',
-      owner  => $user,
-      group  => $user,
-      mode   => '0750',
-    }
-  }
-
-# (3) Configure vhost + php-fpm pool
   file { '/etc/nginx/sites-enabled':
     ensure  => 'directory',
     recurse => true,
     purge   => true,
-    require => Package[$enhancers]
-  }
-
-  if($vhost) and ($user) {
-    if ($ssl) {
-      file { "/etc/nginx/sites-available/${user}":
-      ensure  => present,
-      content => template('gcpweb/vhost_ssl.conf.erb'),
-      mode    => '0644',
-      owner   => 'root',
-      group   => 'root',
-      notify  => Service['nginx'],
-      require => Package[$enhancers]
-      }
-    } else {
-      file { "/etc/nginx/sites-available/${user}":
-      ensure  => present,
-      content => template('gcpweb/vhost.conf.erb'),
-      mode    => '0644',
-      owner   => 'root',
-      group   => 'root',
-      notify  => Service['nginx'],
-      require => Package[$enhancers]
-      }
-    }
-
-    file { "/etc/nginx/sites-enabled/${user}":
-    ensure  => 'link',
-    target  => "/etc/nginx/sites-available/${user}",
-    require => Package[$enhancers]
-    }
-
-    file { "/etc/php/7.0/fpm/pool.d/${user}.conf":
-    ensure  => present,
-    content => template('gcpweb/phpfpm.conf.erb'),
-    mode    => '0644',
-    owner   => 'root',
-    group   => 'root',
-    notify  => Service['php7.0-fpm'],
-    require => Package[$enhancers]
-    }
+    require => Package['nginx']
   }
 
   file { '/etc/nginx/sites-enabled/default':
-  ensure  => 'link',
-  target  => '/etc/nginx/sites-available/default',
-  require => Package[$enhancers]
+    ensure  => 'link',
+    target  => '/etc/nginx/sites-available/default',
+    notify  => Service['nginx'],
+    require => Package['nginx']
   }
 }
