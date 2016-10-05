@@ -61,7 +61,7 @@ define gcpweb::vhost (
       mode    => '0644',
       owner   => 'root',
       group   => 'root',
-      require => User[$user],
+      require => [User[$user],Package['nginx']],
       notify  => Service['nginx']
       }
     } else {
@@ -71,7 +71,7 @@ define gcpweb::vhost (
       mode    => '0644',
       owner   => 'root',
       group   => 'root',
-      require => User[$user],
+      require => [User[$user],Package['nginx']],
       notify  => Service['nginx']
       }
     }
