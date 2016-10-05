@@ -20,13 +20,18 @@ You should not use this until you know exactly what you are doing ...
 
 To create and configure a basic vhost for your node (site.pp):
 
-        node "ubuntu-xenial-1.c.ipmotion-lab.internal" {
+        node "instance-1.c.ipmotion-wp.internal" {
           class { "gcpweb":
-            vhost    =>  ['example.org','www.example.org'],
-            user     => 'example',
-            password => '*',
-            ssl      => false
-          }
+        }
+        gcpweb::vhost { 'example':
+          vhost    =>  ['example.org','www.example.org'],
+          user     => 'example',
+          ssl      => false
+        }
+        gcpweb::vhost { 'example2':
+          vhost    =>  ['example2.org','www.example2.org'],
+          user     => 'example2',
+          ssl      => false
         }
 
 ##Run
