@@ -9,6 +9,7 @@ You should not use this until you know exactly what you are doing ...
         VM instances
         Ubuntu 16.04.1 LTS xenial
 
+
 ##Memo
 
         # apt-get install puppet
