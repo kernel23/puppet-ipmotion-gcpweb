@@ -15,6 +15,12 @@
 #
 # [*shell*]
 # Default '/usr/sbin/nologin'
+#
+# [*root*]
+# Default "/home/${user}/public_html/"
+#
+# [*enable*]
+# Default true
 
 
 define gcpweb::vhost (
@@ -24,6 +30,7 @@ define gcpweb::vhost (
   $vhost     = undef,
   $root      = "/home/${user}/public_html/",
   $ssl       = false,
+  $enable    = true,
   ) {
 
   if($vhost) and ($user) {
@@ -77,10 +84,17 @@ define gcpweb::vhost (
       }
     }
 
-    file { "/etc/nginx/sites-enabled/${user}":
-    ensure  => 'link',
-    target  => "/etc/nginx/sites-available/${user}",
-    require => User[$user]
+    if ($enable) {
+      file { "/etc/nginx/sites-enabled/${user}":
+      ensure  => 'link',
+      target  => "/etc/nginx/sites-available/${user}",
+      require => User[$user]
+      }
+    } else {
+      file { "/etc/nginx/sites-enabled/${user}":
+      ensure  => 'absent',
+      require => User[$user]
+      }
     }
 
     file { "/etc/php/7.0/fpm/pool.d/${user}.conf":
