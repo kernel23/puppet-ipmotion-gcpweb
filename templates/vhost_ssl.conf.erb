@@ -3,51 +3,51 @@
 ###
 
 server {
-	listen 80;
+    listen 80;
     server_name <% @vhost.each do |value| -%><%= value %> <% end -%>;
-	return 301 https://$host$request_uri;
+    return 301 https://$host$request_uri;
 }
 
 server {
     listen 443;
     server_name <% @vhost.each do |value| -%><%= value %> <% end -%>;
-	ssl on;
-	ssl_certificate /etc/letsencrypt/live/<%= @vhost[0] %>/fullchain.pem;
-	ssl_certificate_key /etc/letsencrypt/live/<%= @vhost[0] %>/privkey.pem;
-	ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-	ssl_prefer_server_ciphers on;
-	ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
-	ssl_ecdh_curve secp384r1;
-	ssl_session_cache shared:SSL:10m;
-	ssl_session_tickets off;
-	ssl_stapling on;
-	ssl_stapling_verify on;
-	add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
-	add_header X-Frame-Options DENY;
-	add_header X-Content-Type-Options nosniff;
-	client_max_body_size 100m;
+    ssl on;
+    ssl_certificate /etc/letsencrypt/live/<%= @vhost[0] %>/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/<%= @vhost[0] %>/privkey.pem;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+    ssl_ecdh_curve secp384r1;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_tickets off;
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    client_max_body_size 100m;
     root <%= @root %>;
     index index.php;
-	try_files $uri $uri/ /index.php?$args;
+    try_files $uri $uri/ /index.php?$args;
 
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/var/run/php/<%= @user %>-php7.0-fpm.sock;
     }
 
-	location ~* \.(css|js|gif|jpe?g|png)$ {
-		expires 168h;
-		add_header Pragma public;
-		add_header Cache-Control "public, must-revalidate, proxy-revalidate";
-	}
+    location ~* \.(css|js|gif|jpe?g|png)$ {
+        expires 168h;
+        add_header Pragma public;
+        add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+    }
 
-	location ~ /\. {
-		deny all;
-	}
+    location ~ /\. {
+        deny all;
+    }
 
     include /home/<%= @user %>/config/nginx.conf;
 
-	proxy_set_header X-Real-IP  $remote_addr;
+    proxy_set_header X-Real-IP  $remote_addr;
     proxy_set_header X-Forwarded-For $remote_addr;
 
     access_log /var/log/nginx/<%= @user %>_access.log;
