@@ -42,12 +42,15 @@ class gcpweb (
     'php7.0-opcache',
     'php7.0-readline',
     'php7.0-xml',
-    'letsencrypt'
+    'letsencrypt',
+    'redis-server',
+    'phpmyadmin',
+    'fail2ban'
     ]
 
   package { $enhancers: ensure => 'latest' }
 
-  service { ['nginx','php7.0-fpm']:
+  service { ['nginx','php7.0-fpm','redis-server']:
     ensure  => 'running',
     enable  => true,
     require => Package['nginx','php7.0-fpm'],

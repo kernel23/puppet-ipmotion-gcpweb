@@ -4,13 +4,13 @@
 
 server {
 	listen 80;
-        server_name <% @vhost.each do |value| -%><%= value %> <% end -%>;
+    server_name <% @vhost.each do |value| -%><%= value %> <% end -%>;
 	return 301 https://$host$request_uri;
 }
 
 server {
-        listen 443;
-        server_name <% @vhost.each do |value| -%><%= value %> <% end -%>;
+    listen 443;
+    server_name <% @vhost.each do |value| -%><%= value %> <% end -%>;
 	ssl on;
 	ssl_certificate /etc/letsencrypt/live/<%= @vhost[0] %>/fullchain.pem;
 	ssl_certificate_key /etc/letsencrypt/live/<%= @vhost[0] %>/privkey.pem;
@@ -26,14 +26,14 @@ server {
 	add_header X-Frame-Options DENY;
 	add_header X-Content-Type-Options nosniff;
 	client_max_body_size 100m;
-        root /home/<%= @user %>/public_html/;
-        index index.php;
+    root <%= @root %>;
+    index index.php;
 	try_files $uri $uri/ /index.php?$args;
 
-        location ~ \.php$ {
-                include snippets/fastcgi-php.conf;
-                fastcgi_pass unix:/var/run/php/<%= @user %>-php7.0-fpm.sock;
-        }
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/<%= @user %>-php7.0-fpm.sock;
+    }
 
 	location ~* \.(css|js|gif|jpe?g|png)$ {
 		expires 168h;
@@ -45,11 +45,11 @@ server {
 		deny all;
 	}
 
-        include /home/<%= @user %>/config/nginx.conf;
+    include /home/<%= @user %>/config/nginx.conf;
 
 	proxy_set_header X-Real-IP  $remote_addr;
-        proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Forwarded-For $remote_addr;
 
-        access_log /var/log/nginx/<%= @user %>_access.log;
-        error_log  /var/log/nginx/<%= @user %>_error.log;
+    access_log /var/log/nginx/<%= @user %>_access.log;
+    error_log  /var/log/nginx/<%= @user %>_error.log;
 }

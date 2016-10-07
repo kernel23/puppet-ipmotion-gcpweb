@@ -22,6 +22,7 @@ define gcpweb::vhost (
   $password  = '*',
   $shell     = '/usr/sbin/nologin',
   $vhost     = undef,
+  $root      = "/home/${user}/public_html/",
   $ssl       = false,
   ) {
 
@@ -39,7 +40,7 @@ define gcpweb::vhost (
       ensure => 'directory',
       owner  => $user,
       group  => $user,
-      mode   => '0750',
+      mode   => '0755',
       require => User[$user]
     }
 
