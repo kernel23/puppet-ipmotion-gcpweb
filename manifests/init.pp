@@ -42,10 +42,13 @@ class gcpweb (
     'php7.0-opcache',
     'php7.0-readline',
     'php7.0-xml',
+    'php7.0-curl',
     'letsencrypt',
     'redis-server',
     'phpmyadmin',
-    'fail2ban'
+    'fail2ban',
+    'rsync',
+    'python-pip'
     ]
 
   package { $enhancers: ensure => 'latest' }
@@ -53,7 +56,7 @@ class gcpweb (
   service { ['nginx','php7.0-fpm','redis-server']:
     ensure  => 'running',
     enable  => true,
-    require => Package['nginx','php7.0-fpm'],
+    require => Package['nginx','php7.0-fpm','redis-server'],
   }
 
   class absent_file_exec {

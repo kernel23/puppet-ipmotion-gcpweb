@@ -44,10 +44,10 @@ define gcpweb::vhost (
     }
 
     file { ["/home/${user}/public_html","/home/${user}/config"]:
-      ensure => 'directory',
-      owner  => $user,
-      group  => $user,
-      mode   => '0755',
+      ensure  => 'directory',
+      owner   => $user,
+      group   => $user,
+      mode    => '0755',
       require => User[$user]
     }
 
@@ -57,9 +57,8 @@ define gcpweb::vhost (
       mode    => '0644',
       owner   => $user,
       group   => $user,
-      require => File["/home/${user}/config"],
+      require => File["/home/${user}/config",User[$user]],
       replace => 'no',
-      notify  => Service['nginx']
     }
 
     if ($ssl) {
@@ -69,8 +68,7 @@ define gcpweb::vhost (
       mode    => '0644',
       owner   => 'root',
       group   => 'root',
-      require => [User[$user],Package['nginx']],
-      notify  => Service['nginx']
+      require => User[$user],
       }
     } else {
       file { "/etc/nginx/sites-available/${user}":
@@ -79,8 +77,7 @@ define gcpweb::vhost (
       mode    => '0644',
       owner   => 'root',
       group   => 'root',
-      require => [User[$user],Package['nginx']],
-      notify  => Service['nginx']
+      require => User[$user],
       }
     }
 
@@ -104,7 +101,6 @@ define gcpweb::vhost (
     owner   => 'root',
     group   => 'root',
     require => User[$user],
-    notify  => Service['php7.0-fpm']
     }
   }
 }
