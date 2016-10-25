@@ -45,7 +45,7 @@ To create and configure a basic vhost for your node (site.pp):
         ---
         vhosts:
           test.ca:
-            vhost: [test.fr' ,'www.test.ca']
+            vhost: [test.ca' ,'www.test.ca']
             user: 'test'
             ssl : true
             enable: true
